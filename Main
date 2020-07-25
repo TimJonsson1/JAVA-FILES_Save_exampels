@@ -1,0 +1,104 @@
+package main;
+
+
+import java.io.*;
+import java.nio.file.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        Main m = new Main();
+
+        m.writeTextFile();
+        m.readTextFile();
+
+        m.writeBinaryFile();
+        m.readBinaryFile();
+
+        m.writeSerial();
+        m.readSerial();
+    }
+
+    private void writeTextFile() {
+        try {
+            Path path = Paths.get("textFile.txt");
+
+            ArrayList<String> lines = new ArrayList<>();
+            lines.add("Hello");
+            lines.add("its me...");
+            Files.write(path, lines, StandardOpenOption.CREATE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void readTextFile() {
+        Path path = Paths.get("textFile.txt");
+
+        if (Files.exists(path, LinkOption.NOFOLLOW_LINKS)) {
+            try {
+                List<String> lines = Files.readAllLines(path);
+
+                //lines.stream().forEach(System.out::println);
+
+                for (String line : lines) {
+                    System.out.println(line);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void writeBinaryFile() {
+        try {
+            Path path = Paths.get("file.bin");
+
+            byte[] bytes = {1, 'A', 5};
+
+            Files.write(path, bytes, StandardOpenOption.CREATE);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void readBinaryFile() {
+        try {
+            Path path = Paths.get("file.bin");
+
+            byte[] bytes = Files.readAllBytes(path);
+
+            System.out.format("%d, %s, %d%n", bytes[0], (char)bytes[1], bytes[2]);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    private void writeSerial(){
+        Person p = new Person("Anna");
+
+        File file = new File("person.ser");
+        try (ObjectOutputStream oOut = new ObjectOutputStream(new FileOutputStream(file))){
+            oOut.writeObject(p);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void readSerial(){
+        File file = new File("person.ser");
+
+        try (ObjectInputStream oIn = new ObjectInputStream(new FileInputStream(file))){
+            Person p = (Person)oIn.readObject();
+            System.out.println(p.getName());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+}
